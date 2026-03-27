@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Example",
+    "slug": "example",
+    "scheme": "example",
+    "version": "1.0.0",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "web": {
+      "output": "static"
+    },
+    "android": {
+      "package": "me.lorenzo0111.example",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "me.lorenzo0111.example",
+      "icon": "./assets/Example.icon",
+      "infoPlist": {
+        "NSLocalNetworkUsageDescription": "Allow $(PRODUCT_NAME) to access your local network."
+      }
+    },
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/adaptive-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "backgroundColor": "#0e0e10",
+            "image": "./assets/adaptive-icon.png"
+          }
+        }
+      ],
+      "expo-sqlite",
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ]
+    ]
+  }
+}
