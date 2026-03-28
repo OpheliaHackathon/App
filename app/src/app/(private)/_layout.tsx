@@ -1,4 +1,5 @@
 import BaseLayout from "@/components/base-layout";
+import { ProductChatBot } from "@/components/assistant/product-chat-bot";
 import { authClient } from "@/lib/auth";
 import { isUserOnboardingComplete } from "@/lib/onboarding-storage";
 import { ActivityIndicator, View } from "@/lib/rnw";
@@ -65,13 +66,16 @@ export default function PrivateLayout() {
 
   return (
     <BaseLayout>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="onboarding" />
-        <Stack.Screen name="index" />
-        <Stack.Screen name="search" />
-        <Stack.Screen name="product/[id]" />
-        <Stack.Screen name="profile/[id]" />
-      </Stack>
+      <View className="flex-1">
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="onboarding" />
+          <Stack.Screen name="index" />
+          <Stack.Screen name="search" />
+          <Stack.Screen name="product/[id]" />
+          <Stack.Screen name="profile/[id]" />
+        </Stack>
+        <ProductChatBot />
+      </View>
     </BaseLayout>
   );
 }

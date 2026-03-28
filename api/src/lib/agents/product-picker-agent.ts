@@ -64,7 +64,7 @@ You must:
 1. Call searchProducts at least once to retrieve candidates from the real catalog.
 2. Optionally call searchProducts again with different hints for diversity.
 3. Produce exactly 15 picks. Use only article ids that appear in candidates from your tool results (the "id" field on each candidate). Do not invent ids.
-4. For each pick, write a short reason that explicitly ties the product to the user's mood, personality, and/or interests.`,
+4. For each pick, write a short reason in Italian that explicitly ties the product to the user's mood, personality, and/or interests.`,
     tools: { searchProducts },
     output: Output.object({ schema: productPicksOutputSchema }),
   });

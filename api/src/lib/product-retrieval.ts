@@ -18,9 +18,6 @@ export type ArticleCandidate = {
   companyId: string;
   companyName: string;
   companyImage: string;
-  /** Resolved PDP/checkout link (product-specific or company website). */
-  checkoutUrl: string;
-  /** Approximate cosine similarity (1 - cosine distance) for normalized embeddings. */
   similarity: number;
 };
 
@@ -33,7 +30,6 @@ export type UserProfileForRecommendations = {
 
 export function buildProfileSummary(profile: UserProfileForRecommendations): string {
   const lines = [
-    `Name: ${profile.name}`,
     `Mood: ${profile.mood.length ? profile.mood.join(", ") : "(none)"}`,
     `Personality: ${profile.personality.length ? profile.personality.join(", ") : "(none)"}`,
     `Interests: ${profile.interests.length ? profile.interests.join(", ") : "(none)"}`,
@@ -76,6 +72,7 @@ export async function findSimilarArticles(
   embedding: number[],
   limit: number,
 ): Promise<ArticleCandidate[]> {
+  const safeLimit = Math.min(Math.max(1, Math.trunc(limit)), 100);
   const vec = vectorLiteral(embedding);
   const rows = await prisma.$queryRawUnsafe<
     Array<{
@@ -104,7 +101,7 @@ export async function findSimilarArticles(
      ORDER BY a.embedding <=> $1::vector
      LIMIT $2`,
     vec,
-    limit,
+    safeLimit,
   );
 
   return rows.map((r) => ({
@@ -124,8 +121,8 @@ export async function findSimilarArticles(
 }
 
 export async function countArticlesWithEmbeddings(): Promise<number> {
-  const rows = await prisma.$queryRawUnsafe<[{ count: bigint }]>(
-    `SELECT COUNT(*)::bigint AS count FROM articles WHERE embedding IS NOT NULL`,
-  );
+  const rows = await prisma.$queryRaw<[{ count: bigint }]>`
+    SELECT COUNT(*)::bigint AS count FROM articles WHERE embedding IS NOT NULL
+  `;
   return Number(rows[0]?.count ?? 0);
 }

@@ -1,13 +1,29 @@
 {
-  "fill" : "automatic",
+  "fill" : {
+    "linear-gradient" : [
+      "display-p3:1.00000,0.59346,0.99284,1.00000",
+      "display-p3:0.45594,0.20997,0.96783,1.00000"
+    ],
+    "orientation" : {
+      "start" : {
+        "x" : 0.5,
+        "y" : 0
+      },
+      "stop" : {
+        "x" : 0.5,
+        "y" : 0.7
+      }
+    }
+  },
   "groups" : [
     {
       "layers" : [
         {
-          "image-name" : "Logo.svg",
-          "name" : "Logo",
+          "glass" : false,
+          "image-name" : "logo.png",
+          "name" : "logo",
           "position" : {
-            "scale" : 2,
+            "scale" : 1.8,
             "translation-in-points" : [
               0,
               0

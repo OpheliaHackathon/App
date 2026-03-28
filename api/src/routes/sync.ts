@@ -56,8 +56,8 @@ export const sync = new Elysia({ prefix: "/sync" }).use(betterAuthMacro).get(
         }),
       ]);
     } catch (e) {
-      const message = e instanceof Error ? e.message : "Servizio esterno non disponibile";
-      return status(502, { error: message });
+      console.error("[sync] media fetch error:", e);
+      return status(502, { error: "Servizio esterno non disponibile" });
     }
 
     try {
@@ -81,8 +81,8 @@ export const sync = new Elysia({ prefix: "/sync" }).use(betterAuthMacro).get(
         interests: profile.interests,
       };
     } catch (e) {
-      const message = e instanceof Error ? e.message : "Mappatura profilo fallita";
-      return status(502, { error: message });
+      console.error("[sync] profile mapping error:", e);
+      return status(502, { error: "Elaborazione profilo non riuscita" });
     }
   },
   {

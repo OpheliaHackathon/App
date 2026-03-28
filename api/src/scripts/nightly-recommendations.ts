@@ -4,7 +4,9 @@ import { runNightlyRecommendationsForAllUsers } from "../lib/recommendations/nig
 
 async function main(): Promise<void> {
   const { processed, failures } = await runNightlyRecommendationsForAllUsers();
-  console.log(`Nightly recommendations: processed ${processed} users, ${failures.length} failures`);
+  console.log(
+    `Scheduled recommendations: processed ${processed} users, ${failures.length} failures`,
+  );
   if (failures.length > 0) {
     for (const f of failures.slice(0, 20)) {
       console.error(`  ${f.userId}: ${f.error}`);

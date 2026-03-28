@@ -124,14 +124,14 @@ export const catalog = new Elysia({ prefix: "/catalog", name: "catalog" })
           items: candidates.map((c) => articleCandidateToProduct(c)),
         };
       } catch (e) {
-        const message = e instanceof Error ? e.message : "Ricerca non riuscita";
-        return status(502, { error: message });
+        console.error("[catalog/search] embedding/vector error:", e);
+        return status(502, { error: "Ricerca non disponibile al momento" });
       }
     },
     {
       auth: true,
       query: t.Object({
-        q: t.Optional(t.String()),
+        q: t.Optional(t.String({ maxLength: 500 })),
         limit: t.Optional(t.Integer({ minimum: 1, maximum: 48 })),
       }),
     },

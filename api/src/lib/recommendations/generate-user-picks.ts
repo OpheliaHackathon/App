@@ -100,7 +100,7 @@ export async function hydratePicks(picks: { articleId: string; reason: string }[
 
 /**
  * Runs the product-picker agent and upserts user_recommendations.
- * Safe to call from sync (fire-and-forget), cron, or internal jobs.
+ * Safe to call from sync (fire-and-forget), weekly scheduled batch, or internal jobs.
  */
 export async function generateAndPersistUserPicks(
   userId: string,

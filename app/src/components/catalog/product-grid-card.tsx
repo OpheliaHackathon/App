@@ -1,6 +1,7 @@
 import { AppImage, Pressable, Text, View } from "@/lib/rnw";
 import type { Href } from "expo-router";
 import { router } from "expo-router";
+import { InteractionManager } from "react-native";
 
 export type ProductGridCardItem = {
   id: string;
@@ -15,6 +16,11 @@ export type ProductGridCardProps = {
   href: Href;
   /** Stile bordo: default più marcato per allineamento al feed; subtle per griglie dense. */
   emphasis?: "default" | "subtle";
+  /**
+   * Eseguito prima del push (es. `setOpen(false)` su una Modal a tutto schermo),
+   * così la navigazione non resta coperta dallo strato nativo della modale.
+   */
+  onBeforeNavigate?: () => void;
 };
 
 /**
@@ -24,8 +30,16 @@ export function ProductGridCard({
   item,
   href,
   emphasis = "default",
+  onBeforeNavigate,
 }: ProductGridCardProps) {
   function onPress() {
+    if (onBeforeNavigate) {
+      onBeforeNavigate();
+      InteractionManager.runAfterInteractions(() => {
+        router.push(href);
+      });
+      return;
+    }
     router.push(href);
   }
 

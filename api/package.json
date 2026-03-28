@@ -4,14 +4,14 @@
   "scripts": {
     "start": "bun run src/index.ts",
     "dev": "bun run --watch src/index.ts",
-    "db:migrate": "bun run src/scripts/migrate.ts",
+    "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:embed-articles": "bun run src/scripts/embed-articles.ts",
-    "jobs:nightly-recommendations": "bun run src/scripts/nightly-recommendations.ts"
+    "jobs:nightly-recommendations": "bun run src/scripts/nightly-recommendations.ts",
+    "shopify:fetch-products": "bun run src/scripts/shopify-fetch-products.ts"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./auth": "./src/lib/auth/client.ts"
+    ".": "./src/index.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.48",

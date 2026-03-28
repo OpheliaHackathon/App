@@ -97,16 +97,19 @@ model Article {
   image       String
   /// Product-specific checkout or PDP on the seller site; falls back to company.website in the API when null.
   checkoutUrl String?
+  /// Shopify Admin GraphQL Product `id` (GID), set when the row was synced from Shopify.
+  shopifyProductId String?
   embedding   Unsupported("vector(1536)")?
 
   companyId String
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
+  @@unique([companyId, shopifyProductId])
   @@index([companyId])
   @@map("articles")
 }
 
-/// Cached picks from the product-picker agent (refreshed nightly and after sync).
+/// Cached picks from the product-picker agent (refreshed weekly batch Sunday evening + after sync).
 model UserRecommendation {
   userId      String   @id
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)

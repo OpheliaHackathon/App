@@ -47,7 +47,7 @@ async function buildVectorPreviewItems(
 }
 
 /**
- * Consigli giornalieri (cache agente) o anteprima vettoriale se la cache non è valida.
+ * Consigli curati (cache agente, rigenerata in batch domenica sera) o anteprima vettoriale se la cache non è valida.
  */
 export const recommendations = new Elysia({ prefix: "/recommendations" })
   .use(betterAuthMacro)
