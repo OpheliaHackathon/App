@@ -44,3 +44,4 @@ package-lock.json
 *.sqlite
 .env
 uploads/
+/src/generated/prisma

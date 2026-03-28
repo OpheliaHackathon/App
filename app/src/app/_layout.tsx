@@ -1,47 +1,56 @@
 import "@/global.css";
 import { authClient } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
-import { useEffect } from "react";
-import { Alert } from "react-native";
+import { useState } from "react";
+import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import migrations from "../../drizzle/migrations";
+import { useUniwind } from "uniwind";
 
+/**
+ * Radice app: theming Uniwind, React Query e stack protetto in base alla sessione.
+ */
 function LayoutContent() {
-  const { success, error } = useMigrations(db, migrations);
-
+  useUniwind();
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000,
+            retry: 2,
+          },
+        },
+      }),
+  );
   const { isPending, data: session } = authClient.useSession();
 
-  useEffect(() => {
-    if (!success && error) {
-      Alert.alert(
-        "Error",
-        "C'è stato un errore durante la migrazione del database",
-      );
-      console.error(error);
-    }
-  }, [success, error]);
-
   return (
-    <GestureHandlerRootView>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={isPending || !success}>
-          <Stack.Screen name="(loading)" />
-        </Stack.Protected>
+    <GestureHandlerRootView style={styles.root}>
+      <QueryClientProvider client={queryClient}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Protected guard={isPending}>
+            <Stack.Screen name="(loading)" />
+          </Stack.Protected>
 
-        <Stack.Protected guard={!isPending && !session}>
-          <Stack.Screen name="(public)" />
-        </Stack.Protected>
+          <Stack.Protected guard={!isPending && !session}>
+            <Stack.Screen name="(public)" />
+          </Stack.Protected>
 
-        <Stack.Protected guard={!isPending && !!session}>
-          <Stack.Screen name="(private)" />
-        </Stack.Protected>
-      </Stack>
+          <Stack.Protected guard={!isPending && !!session}>
+            <Stack.Screen name="(private)" />
+          </Stack.Protected>
+        </Stack>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }
 
+/** Entry Expo Router (`app/_layout.tsx`). */
 export default function Layout() {
   return <LayoutContent />;
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});

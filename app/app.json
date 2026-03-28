@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Example",
-    "slug": "example",
-    "scheme": "example",
+    "name": "Faindy",
+    "slug": "faindy",
+    "scheme": "faindy",
     "version": "1.0.0",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
@@ -10,7 +10,7 @@
       "output": "static"
     },
     "android": {
-      "package": "me.lorenzo0111.example",
+      "package": "me.lorenzo0111.faindy",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -18,10 +18,12 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "me.lorenzo0111.example",
-      "icon": "./assets/Example.icon",
+      "bundleIdentifier": "me.lorenzo0111.faindy",
+      "icon": "./assets/Faindy.icon",
       "infoPlist": {
-        "NSLocalNetworkUsageDescription": "Allow $(PRODUCT_NAME) to access your local network."
+        "NSLocalNetworkUsageDescription": "Allow $(PRODUCT_NAME) to access your local network.",
+        "UIStatusBarStyle": "UIStatusBarStyleDefault",
+        "UIViewControllerBasedStatusBarAppearance": false
       }
     },
     "experiments": {

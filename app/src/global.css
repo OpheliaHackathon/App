@@ -4,43 +4,57 @@
 @layer theme {
   :root {
     @variant dark {
-      --color-primary: #6c4eff;
-      --color-secondary: #8a6bff;
-      --color-tertiary: #c2b6ff;
+      --color-primary: #f472b6;
+      --color-secondary: #22d3ee;
+      --color-tertiary: #fde047;
 
-      --color-background: #0e0e10;
-      --color-card: #1c1c20;
-      --color-text: #ffffff;
-      --color-input: #9a9aa0;
+      --color-background: #0f0a14;
+      --color-card: #1a1423;
+      --color-text: #faf5ff;
+      --color-input: #c4b5d8;
 
       --color-success: #4ade80;
       --color-warning: #facc15;
-      --color-error: #f87171;
+      --color-error: #fb7185;
 
-      --color-border: #2a2a2f;
-      --color-placeholder: #9a9aa0;
+      --color-border: #35284a;
+      --color-placeholder: #a78bca;
 
-      --radius-base: 8px;
+      --color-header: #4c1d95;
+      --color-headerText: #faf5ff;
+      --color-headerMuted: #e9d5ff;
+
+      --color-pickGlow: #86198f;
+      --color-playSurface: #2e1065;
+
+      --radius-base: 16px;
     }
 
     @variant light {
-      --color-primary: #6c4eff;
-      --color-secondary: #8a6bff;
-      --color-tertiary: #c2b6ff;
+      --color-primary: #c026d3;
+      --color-secondary: #0d9488;
+      --color-tertiary: #f59e0b;
 
-      --color-background: #ffffff;
-      --color-card: #f4f4f7;
-      --color-text: #0e0e10;
-      --color-input: #4c4c52;
+      --color-background: #fff7fb;
+      --color-card: #ffffff;
+      --color-text: #1e1528;
+      --color-input: #5b4d6d;
 
-      --color-success: #22c55e;
-      --color-warning: #ca8a04;
-      --color-error: #dc2626;
+      --color-success: #059669;
+      --color-warning: #d97706;
+      --color-error: #e11d48;
 
-      --color-border: #d4d4d8;
-      --color-placeholder: #7f7f86;
+      --color-border: #f0e4f4;
+      --color-placeholder: #8b7a9a;
 
-      --radius-base: 8px;
+      --color-header: #6d28d9;
+      --color-headerText: #faf5ff;
+      --color-headerMuted: #e9d5ff;
+
+      --color-pickGlow: #fdf2f8;
+      --color-playSurface: #faf5ff;
+
+      --radius-base: 18px;
     }
   }
 }

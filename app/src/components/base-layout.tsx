@@ -1,15 +1,13 @@
 import { Slot } from "expo-router";
-import { StatusBar } from "react-native";
 
+/**
+ * Involucro radice per gruppi di route.
+ * L’aspetto della status bar va impostato in nativo (es. iOS `Info.plist`: `UIStatusBarStyle`, `UIViewControllerBasedStatusBarAppearance`).
+ */
 export default function BaseLayout({
   children = <Slot />,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      {children}
-      <StatusBar barStyle="light-content" />
-    </>
-  );
+  return <>{children}</>;
 }

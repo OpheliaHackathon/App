@@ -1,12 +1,7 @@
 import classNames from "classnames";
 import React, { forwardRef } from "react";
-import {
-  ColorValue,
-  Text,
-  TextInput,
-  TextInputProps,
-  View,
-} from "react-native";
+import type { ColorValue, TextInput as RNTextInput, TextInputProps } from "react-native";
+import { Text, TextInput, View } from "@/lib/rnw";
 import { useCSSVariable } from "uniwind";
 
 export interface InputProps extends TextInputProps {
@@ -15,7 +10,7 @@ export interface InputProps extends TextInputProps {
   containerClassName?: string;
 }
 
-export const Input = forwardRef<TextInput, InputProps>(
+export const Input = forwardRef<RNTextInput, InputProps>(
   ({ className, containerClassName, label, error, ...props }, ref) => {
     const placeholderColor = useCSSVariable("--color-placeholder");
 

@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String    @id
+  name            String
+  email           String
+  emailVerified   Boolean   @default(false)
+  username        String?   @unique
+  displayUsername String?   @map("display_username")
+  image           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  mood            String[]  @default([])
+  personality     String[]  @default([])
+  interests       String[]  @default([])
+  sessions        Session[]
+  accounts        Account[]
+  recommendation  UserRecommendation?
+
+  @@unique([email])
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verifications")
+}
+
+model Company {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  image       String
+  website     String
+  articles    Article[]
+
+  @@map("companies")
+}
+
+model Article {
+  id          String                       @id @default(cuid())
+  title       String
+  description String
+  category    String
+  tags        String[]
+  price       Int
+  image       String
+  /// Product-specific checkout or PDP on the seller site; falls back to company.website in the API when null.
+  checkoutUrl String?
+  embedding   Unsupported("vector(1536)")?
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("articles")
+}
+
+/// Cached picks from the product-picker agent (refreshed nightly and after sync).
+model UserRecommendation {
+  userId      String   @id
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fingerprint String
+  picks       Json
+  generatedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("user_recommendations")
+}

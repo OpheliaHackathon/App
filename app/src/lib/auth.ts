@@ -1,5 +1,5 @@
 import { expoClient } from "@better-auth/expo/client";
-import { oneTimeTokenClient, usernameClient } from "better-auth/client/plugins";
+import { usernameClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import * as SecureStore from "expo-secure-store";
 import { API_BASE_URL } from "./constants";
@@ -11,10 +11,9 @@ export const authClient = createAuthClient({
   baseURL: API_BASE_URL,
   plugins: [
     usernameClient(),
-    oneTimeTokenClient(),
     expoClient({
-      scheme: "example",
-      storagePrefix: "example",
+      scheme: "faindy",
+      storagePrefix: "faindy",
       storage: SecureStore,
     }),
   ],

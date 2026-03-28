@@ -1,43 +1,41 @@
 import {
-  getProductsByPublisherId,
-  getPublisherById,
-} from "@/lib/mock-products";
-import { Image as ExpoImage } from "expo-image";
+  ProductGridCard,
+  type ProductGridCardItem,
+} from "@/components/catalog/product-grid-card";
+import { PrivateScreenHeader } from "@/components/layout/private-screen-header";
+import { useCompanyCatalogQuery } from "@/hooks/use-catalog";
+import { ActivityIndicator, AppImage, FlatList, Text, View } from "@/lib/rnw";
+import type { Href } from "expo-router";
 import { router, useLocalSearchParams } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
-import {
-  ColorValue,
-  FlatList,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useCSSVariable, withUniwind } from "uniwind";
+import { SafeAreaView as RNSSafeAreaView } from "react-native-safe-area-context";
+import { withUniwind } from "uniwind";
 
-const Image = withUniwind(ExpoImage);
+const SafeAreaView = withUniwind(RNSSafeAreaView);
 
+/**
+ * Vetrina pubblica di un venditore: avatar, elenco prodotti in griglia unificata.
+ */
 export default function ExternalProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const publisherId = id ? String(id) : "";
-  const publisher = publisherId ? getPublisherById(publisherId) : undefined;
-  const products = publisherId
-    ? getProductsByPublisherId(publisherId)
-    : [];
-  const textMuted = useCSSVariable("--color-input");
+  const { data, isPending, isError, error } = useCompanyCatalogQuery(
+    publisherId || undefined,
+  );
+  const publisher = data?.publisher;
+  const products = data?.products ?? [];
 
   const listHeader = publisher ? (
     <View className="items-center pb-4 pt-2">
-      <Image
+      <AppImage
         source={{ uri: publisher.avatarUrl }}
         className="size-24 rounded-full border-2 border-border"
         contentFit="cover"
         transition={200}
       />
-      <Text className="mt-4 text-center text-2xl font-semibold text-text">
+      <Text className="mt-4 text-center text-2xl font-black text-text">
         {publisher.name}
       </Text>
-      <Text className="mt-4 self-stretch px-4 text-sm font-medium text-input">
+      <Text className="mt-4 self-stretch px-1 text-sm font-semibold text-input">
         Prodotti pubblicati ({products.length})
       </Text>
     </View>
@@ -45,23 +43,38 @@ export default function ExternalProfileScreen() {
 
   if (!publisherId) return null;
 
-  return (
-    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="flex-row items-center border-b border-border px-2 pb-2">
-        <Pressable
-          onPress={() => router.back()}
-          className="flex-row items-center rounded-base p-2 active:opacity-70"
-          hitSlop={12}
-        >
-          <ChevronLeft size={28} color={textMuted as ColorValue} />
-        </Pressable>
-        <Text
-          className="ml-1 flex-1 text-base font-medium text-text"
-          numberOfLines={1}
-        >
-          Profilo venditore
+  if (isPending) {
+    return (
+      <SafeAreaView
+        className="flex-1 items-center justify-center bg-background"
+        edges={["top", "bottom"]}
+      >
+        <ActivityIndicator size="large" />
+      </SafeAreaView>
+    );
+  }
+
+  if (isError) {
+    return (
+      <SafeAreaView
+        className="flex-1 items-center justify-center bg-background px-6"
+        edges={["top", "bottom"]}
+      >
+        <Text className="text-center text-base text-text">
+          {error instanceof Error
+            ? error.message
+            : "Impossibile caricare il profilo."}
         </Text>
-      </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
+      <PrivateScreenHeader
+        title="Profilo venditore"
+        onBack={() => router.back()}
+      />
 
       {!publisher ? (
         <View className="flex-1 items-center justify-center px-6">
@@ -71,8 +84,8 @@ export default function ExternalProfileScreen() {
         </View>
       ) : (
         <FlatList
-          data={products}
-          keyExtractor={(item) => item.id}
+          data={products as ProductGridCardItem[]}
+          keyExtractor={(item) => (item as ProductGridCardItem).id}
           numColumns={2}
           ListHeaderComponent={listHeader}
           ListEmptyComponent={
@@ -84,35 +97,12 @@ export default function ExternalProfileScreen() {
           contentContainerClassName="pb-6 pt-4"
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => {
-                router.push({
-                  pathname: "/product/[id]",
-                  params: { id: item.id },
-                });
-              }}
-              className="mb-3 flex-1 overflow-hidden rounded-base border border-border bg-card active:opacity-90"
-            >
-              <Image
-                source={{ uri: item.imageUrl }}
-                className="aspect-square w-full"
-                contentFit="cover"
-                transition={200}
-              />
-              <View className="p-3">
-                <Text
-                  className="text-sm font-medium leading-5 text-text"
-                  numberOfLines={2}
-                >
-                  {item.title}
-                </Text>
-                <Text className="mt-2 text-base font-semibold text-primary">
-                  {item.price}
-                </Text>
-              </View>
-            </Pressable>
-          )}
+          renderItem={({ item }) => {
+            const row = item as ProductGridCardItem;
+            return (
+              <ProductGridCard item={row} href={`/product/${row.id}` as Href} />
+            );
+          }}
         />
       )}
     </SafeAreaView>

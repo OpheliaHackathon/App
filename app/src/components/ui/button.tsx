@@ -1,11 +1,7 @@
 import classNames from "classnames";
 import React, { forwardRef } from "react";
-import {
-  ActivityIndicator,
-  Text,
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from "react-native";
+import type { TouchableOpacityProps } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity } from "@/lib/rnw";
 
 export interface ButtonProps extends TouchableOpacityProps {
   variant?: "default" | "secondary" | "destructive" | "outline" | "ghost";
@@ -56,7 +52,9 @@ export const Button = forwardRef<
           <ActivityIndicator
             size="small"
             color={
-              variant === "outline" || variant === "ghost" ? "#ffffff" : "white"
+              variant === "outline" || variant === "ghost"
+                ? "#57534e"
+                : "#ffffff"
             }
             className="mr-2"
           />
