@@ -1,8 +1,8 @@
 FROM oven/bun:1 AS base
 
-FROM base AS turbo-cli
-
 RUN bun install -g turbo
+
+FROM base AS turbo-cli
 
 FROM turbo-cli AS builder
 WORKDIR /app
@@ -17,7 +17,6 @@ WORKDIR /app
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/bun.lock ./bun.lock
 RUN bun install --frozen-lockfile --production
-RUN bun turbo db:generate
 
 COPY --from=builder /app/out/full/ .
 
@@ -27,6 +26,8 @@ WORKDIR /app/api
 
 COPY --from=builder /app/api/start.sh .
 RUN chmod +x start.sh
+
+RUN turbo run db:generate
 
 ENV NODE_ENV=production
 
