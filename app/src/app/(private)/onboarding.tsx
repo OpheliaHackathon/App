@@ -1,3 +1,4 @@
+import { LogoutButton } from "@/components/auth/logout-button";
 import { Button } from "@/components/ui/button";
 import { SafeAreaView } from "@/components/ui/safe-area-view";
 import client from "@/lib/fetcher";
@@ -28,7 +29,6 @@ const UniwindText = withUniwind(Text);
 const UniwindPressable = withUniwind(Pressable);
 const UniwindFlatList = withUniwind(FlatList);
 const UniwindActivityIndicator = withUniwind(ActivityIndicator);
-const AnimatedUniwindText = Animated.createAnimatedComponent(UniwindText);
 
 /** Padding orizzontale equivalente a `px-5` sul contenitore storie (20 + 20). */
 const STORY_HORIZONTAL_PAD = 40;
@@ -48,7 +48,7 @@ const STORY_PAGES: {
   {
     icon: <Store size={40} color="#ea580c" strokeWidth={2} />,
     title: "Scopri il Negozio",
-    body: "Sfoglia il catalogo, filtra le categorie, apri una scheda prodotto e scopri chi l’ha pubblicato. Un tap per entrare nel dettaglio.",
+    body: "Sfoglia il catalogo, apri una scheda prodotto e scopri chi l’ha pubblicato. Un tap per entrare nel dettaglio.",
     foot: "Tutto parte dalla home.",
   },
   {
@@ -222,25 +222,14 @@ export default function OnboardingScreen() {
       >
         {phase === "story" ? (
           <>
-            <UniwindView className="mb-4 flex-row items-center justify-between">
-              <UniwindText className="text-3xl font-black text-text">
+            <UniwindView className="mb-4 flex-row items-center justify-between gap-2">
+              <UniwindText
+                className="min-w-0 flex-1 text-3xl font-black text-text"
+                numberOfLines={2}
+              >
                 Ciao{session?.user?.name ? `, ${session.user.name}` : ""}!
               </UniwindText>
-              <AnimatedUniwindText
-                style={{
-                  transform: [
-                    {
-                      translateY: bounce.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0, -6],
-                      }),
-                    },
-                  ],
-                }}
-                className="text-3xl"
-              >
-                🎉
-              </AnimatedUniwindText>
+              <LogoutButton />
             </UniwindView>
 
             <UniwindFlatList
@@ -263,12 +252,9 @@ export default function OnboardingScreen() {
                 return (
                   <UniwindView
                     style={{ width: storyPageWidth }}
-                    className="flex-1 justify-center"
+                    className="flex-1"
                   >
-                    <UniwindView className="rounded-3xl border-2 border-primary/40 bg-card px-5 py-7">
-                      <UniwindView className="mb-4 self-start rounded-2xl bg-primary/15 p-3">
-                        {story.icon}
-                      </UniwindView>
+                    <UniwindView>
                       <UniwindText className="text-2xl font-bold leading-8 text-text">
                         {story.title}
                       </UniwindText>
@@ -318,49 +304,31 @@ export default function OnboardingScreen() {
           </>
         ) : (
           <>
-            <UniwindText className="text-2xl font-bold text-text">
-              Collega Google & Spotify
-            </UniwindText>
-            <UniwindText className="mt-2 text-base leading-6 text-input">
-              Due tap per dare colore al tuo profilo. Poi sincronizziamo gusti e
-              interessi.
-            </UniwindText>
+            <UniwindView className="flex-row items-start justify-between gap-2">
+              <UniwindView className="min-w-0 flex-1">
+                <UniwindText className="text-2xl font-bold text-text">
+                  Collega Google & Spotify
+                </UniwindText>
+                <UniwindText className="mt-2 text-base leading-6 text-input">
+                  Due tap per dare colore al tuo profilo. Poi sincronizziamo
+                  gusti e interessi.
+                </UniwindText>
+              </UniwindView>
+              <LogoutButton />
+            </UniwindView>
 
             <UniwindView className="mt-6 gap-3">
-              <UniwindView className="flex-row flex-wrap gap-2">
-                <UniwindView
-                  className={`rounded-full border px-3 py-1 ${
-                    linked.google
-                      ? "border-success/60 bg-success/10"
-                      : "border-border"
-                  }`}
-                >
-                  <UniwindText className="text-xs font-semibold text-text">
-                    Google {linked.google ? "✓" : "·"}
-                  </UniwindText>
-                </UniwindView>
-                <UniwindView
-                  className={`rounded-full border px-3 py-1 ${
-                    linked.spotify
-                      ? "border-success/60 bg-success/10"
-                      : "border-border"
-                  }`}
-                >
-                  <UniwindText className="text-xs font-semibold text-text">
-                    Spotify {linked.spotify ? "✓" : "·"}
-                  </UniwindText>
-                </UniwindView>
-              </UniwindView>
-
               <UniwindPressable
-                onPress={() => !linkBusy && linked.google === false && linkProvider("google")}
+                onPress={() =>
+                  !linkBusy && linked.google === false && linkProvider("google")
+                }
                 disabled={!!linkBusy || linked.google}
                 className={`rounded-2xl border-2 border-border bg-card p-4 active:opacity-85 ${
                   linked.google ? "opacity-60" : ""
                 }`}
               >
                 <UniwindText className="text-lg font-bold text-text">
-                  📺 YouTube via Google
+                  YouTube via Google
                 </UniwindText>
                 <UniwindText className="mt-1 text-sm text-input">
                   Leggiamo i Mi piace per capire cosa ti ispira.
@@ -378,7 +346,9 @@ export default function OnboardingScreen() {
 
               <UniwindPressable
                 onPress={() =>
-                  !linkBusy && linked.spotify === false && linkProvider("spotify")
+                  !linkBusy &&
+                  linked.spotify === false &&
+                  linkProvider("spotify")
                 }
                 disabled={!!linkBusy || linked.spotify}
                 className={`rounded-2xl border-2 border-border bg-card p-4 active:opacity-85 ${
@@ -386,7 +356,7 @@ export default function OnboardingScreen() {
                 }`}
               >
                 <UniwindText className="text-lg font-bold text-text">
-                  🎧 Spotify top tracks
+                  Spotify top tracks
                 </UniwindText>
                 <UniwindText className="mt-1 text-sm text-input">
                   La tua musica recente completa il ritratto.
@@ -407,13 +377,15 @@ export default function OnboardingScreen() {
               {syncDone ? (
                 <>
                   <UniwindView className="items-center rounded-2xl border border-primary/40 bg-primary/10 px-4 py-5">
-                    <UniwindText className="text-center text-4xl">🪄</UniwindText>
+                    <UniwindText className="text-center text-4xl">
+                      🪄
+                    </UniwindText>
                     <UniwindText className="mt-2 text-center text-base font-semibold text-text">
                       Profilo aggiornato!
                     </UniwindText>
                     <UniwindText className="mt-1 text-center text-sm text-input">
-                      Ora il backend conosce i tuoi mood e interessi. In
-                      negozio potrai ricevere picks più pertinenti.
+                      Ora il backend conosce i tuoi mood e interessi. In negozio
+                      potrai ricevere picks più pertinenti.
                     </UniwindText>
                   </UniwindView>
                   <Button
@@ -435,10 +407,6 @@ export default function OnboardingScreen() {
                     }
                     onPress={runSync}
                   />
-                  <UniwindText className="text-center text-xs text-input">
-                    Richiede Google e Spotify collegati. Chiama il server che
-                    unisce YouTube + Spotify e aggiorna il tuo utente.
-                  </UniwindText>
                   <Button
                     variant="ghost"
                     label="Torna al tour"

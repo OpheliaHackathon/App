@@ -44,8 +44,9 @@ export default function RegisterScreen() {
 
   return (
     <AuthScreenChrome
-      title="Crea il tuo account"
-      subtitle="Un passaggio in più e potrai salvare gusti, sync e consigli personalizzati."
+      mascotte
+      title="Entra in Faindy"
+      subtitle="Crea l&apos;account e iniziamo a scoprire i prodotti adatti a te."
     >
       <View className={classNames("flex flex-col gap-3", keyboard && "pb-4")}>
         <Input

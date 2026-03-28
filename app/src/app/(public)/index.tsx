@@ -39,8 +39,9 @@ export default function LoginScreen() {
 
   return (
     <AuthScreenChrome
+      mascotte
       title="Bentornato!"
-      subtitle="Accedi per continuare da dove l’hai lasciato."
+      subtitle="Accedi per scoprire i prodotti adatti a te."
     >
       <View
         className={classNames(
