@@ -1,22 +1,22 @@
 import Elysia, { t } from "elysia";
 import { betterAuthMacro } from "../lib/auth";
+import { prisma } from "../lib/prisma";
 import {
   embedForSearch,
   findSimilarArticles,
   type ArticleCandidate,
 } from "../lib/product-retrieval";
-import { prisma } from "../lib/prisma";
 
 /** Soglia minima query di ricerca (allineata al client). */
 export const CATALOG_SEARCH_MIN_LEN = 2;
 
-function formatPriceEur(euros: number): string {
+function formatPriceEur(priceCents: number): string {
   return new Intl.NumberFormat("it-IT", {
     style: "currency",
     currency: "EUR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  }).format(euros);
+  }).format(priceCents / 100);
 }
 
 function toPublisher(company: { id: string; name: string; image: string }) {
@@ -27,20 +27,18 @@ function toPublisher(company: { id: string; name: string; image: string }) {
   };
 }
 
-export function articleWithCompanyToProduct(
-  article: {
-    id: string;
-    title: string;
-    description: string;
-    category: string;
-    price: number;
-    image: string;
-    checkoutUrl: string | null;
-    company: { id: string; name: string; image: string; website: string };
-  },
-) {
+export function articleWithCompanyToProduct(article: {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  image: string;
+  checkoutUrl: string | null;
+  company: { id: string; name: string; image: string; website: string };
+}) {
   const checkoutUrl =
-    (article.checkoutUrl?.trim() || article.company.website.trim()) || null;
+    article.checkoutUrl?.trim() || article.company.website.trim() || null;
   return {
     id: article.id,
     title: article.title,

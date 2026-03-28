@@ -16,6 +16,7 @@ export type ArticleCandidate = {
   price: number;
   image: string;
   companyId: string;
+  checkoutUrl: string;
   companyName: string;
   companyImage: string;
   similarity: number;
