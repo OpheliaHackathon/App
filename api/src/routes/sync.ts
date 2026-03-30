@@ -1,9 +1,9 @@
 import Elysia, { t } from "elysia";
 import { auth, betterAuthMacro } from "../lib/auth";
 import { fetchSpotifyTopTracks, fetchYoutubeLikes } from "../lib/media-sources";
+import { prisma } from "../lib/prisma";
 import { mapMediaToProfile } from "../lib/profile-mapper";
 import { generateAndPersistUserPicks } from "../lib/recommendations/generate-user-picks";
-import { prisma } from "../lib/prisma";
 
 /**
  * Sincronizza YouTube (Mi piace) + Spotify (top/recent), aggiorna il profilo utente e avvia il refresh dei pick in background.
@@ -24,8 +24,7 @@ export const sync = new Elysia({ prefix: "/sync" }).use(betterAuthMacro).get(
       googleToken = g.accessToken;
     } catch {
       return status(400, {
-        error:
-          "Account Google non collegato o token assente. Collega Google con lo scope YouTube (rileva dopo aggiornamento scope).",
+        error: "Account Google non collegato",
       });
     }
 
@@ -37,8 +36,7 @@ export const sync = new Elysia({ prefix: "/sync" }).use(betterAuthMacro).get(
       spotifyToken = s.accessToken;
     } catch {
       return status(400, {
-        error:
-          "Account Spotify non collegato o token assente. Collega Spotify con user-top-read.",
+        error: "Account Spotify non collegato",
       });
     }
 
@@ -72,7 +70,11 @@ export const sync = new Elysia({ prefix: "/sync" }).use(betterAuthMacro).get(
       });
       void generateAndPersistUserPicks(user.id).then((r) => {
         if (!r.ok) {
-          console.error("[sync] bootstrap raccomandazioni fallito", user.id, r.error);
+          console.error(
+            "[sync] bootstrap raccomandazioni fallito",
+            user.id,
+            r.error,
+          );
         }
       });
       return {

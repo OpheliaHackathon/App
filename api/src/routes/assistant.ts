@@ -47,10 +47,7 @@ function extractLastWeatherFromSteps(
 }
 
 function trimHistory(
-  history:
-    | { role: "user" | "assistant"; content: string }[]
-    | null
-    | undefined,
+  history: { role: "user" | "assistant"; content: string }[] | null | undefined,
 ): { role: "user" | "assistant"; content: string }[] {
   if (!history?.length) return [];
   const trimmed = history
@@ -67,20 +64,9 @@ function trimHistory(
   return trimmed.slice(-MAX_HISTORY_MESSAGES);
 }
 
-function buildPrompt(
-  message: string,
-  history: { role: "user" | "assistant"; content: string }[],
-): string {
-  const lines: string[] = [];
-  for (const m of history) {
-    const who = m.role === "user" ? "Utente" : "Assistente";
-    lines.push(`${who}: ${m.content}`);
-  }
-  lines.push(`Utente: ${message.trim()}`);
-  return lines.join("\n\n");
-}
-
-export type AssistantChatProduct = ReturnType<typeof articleWithCompanyToProduct>;
+export type AssistantChatProduct = ReturnType<
+  typeof articleWithCompanyToProduct
+>;
 
 export const assistant = new Elysia({ prefix: "/assistant", name: "assistant" })
   .use(betterAuthMacro)
@@ -123,14 +109,13 @@ export const assistant = new Elysia({ prefix: "/assistant", name: "assistant" })
           });
 
       const history = trimHistory(body.history);
-      const prompt = buildPrompt(message, history);
 
       const agent = createShopAssistantAgent(profileSummaryLines);
 
       let result;
       try {
         result = await agent.generate({
-          prompt: `Conversazione (ultimo messaggio è la richiesta da soddisfare):\n\n${prompt}\n\nRispondi con testo utile in reply e con suggestedProductIds solo se proponi prodotti dal catalogo (dopo searchCatalog).`,
+          messages: history.map((m) => ({ role: m.role, content: m.content })),
         });
       } catch (e) {
         console.error("[assistant/chat] agent error:", e);
@@ -170,8 +155,13 @@ export const assistant = new Elysia({ prefix: "/assistant", name: "assistant" })
       const byId = new Map(articles.map((a) => [a.id, a]));
       for (const id of validIds) {
         if (!byId.has(id)) {
-          console.error("[assistant/chat] suggested article not found in DB:", id);
-          return status(502, { error: "Uno o più articoli suggeriti non sono disponibili" });
+          console.error(
+            "[assistant/chat] suggested article not found in DB:",
+            id,
+          );
+          return status(502, {
+            error: "Uno o più articoli suggeriti non sono disponibili",
+          });
         }
       }
 

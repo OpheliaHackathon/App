@@ -1,29 +1,26 @@
 import Elysia from "elysia";
-import {
-  hydratePicks,
-  productPicksOutputSchema,
-} from "../lib/recommendations/generate-user-picks";
-
-/** DB legacy rows store the array only; new writes use `{ picks: [...] }` like the agent output. */
-function parseStoredPicks(
-  raw: unknown,
-): { articleId: string; reason: string }[] | null {
-  const wrapped = productPicksOutputSchema.safeParse(raw);
-  if (wrapped.success) return wrapped.data.picks;
-  const arr = productPicksOutputSchema.shape.picks.safeParse(raw);
-  if (arr.success) return arr.data;
-  return null;
-}
+import type { User } from "../generated/prisma/client";
 import { betterAuthMacro } from "../lib/auth";
 import { prisma } from "../lib/prisma";
-import { articleCandidateToProduct } from "./catalog";
 import {
   buildProfileSummary,
   countArticlesWithEmbeddings,
   embedForSearch,
   findSimilarArticles,
 } from "../lib/product-retrieval";
-import type { User } from "../generated/prisma/client";
+import {
+  hydratePicks,
+  productPicksOutputSchema,
+} from "../lib/recommendations/generate-user-picks";
+import { articleCandidateToProduct } from "./catalog";
+
+function parseStoredPicks(
+  raw: unknown,
+): { articleId: string; reason: string }[] | null {
+  const wrapped = productPicksOutputSchema.safeParse(raw);
+  if (!wrapped.success) return null;
+  return wrapped.data.picks;
+}
 
 const VECTOR_PREVIEW_MESSAGE =
   "Questa selezione rispecchia il tuo profilo per similarità mentre ultimiamo la cura personalizzata.";
@@ -101,9 +98,13 @@ export const recommendations = new Elysia({ prefix: "/recommendations" })
               previewMessage: null,
             };
           }
-          await prisma.userRecommendation.delete({ where: { userId: dbUser.id } });
+          await prisma.userRecommendation.delete({
+            where: { userId: dbUser.id },
+          });
         } else {
-          await prisma.userRecommendation.delete({ where: { userId: dbUser.id } });
+          await prisma.userRecommendation.delete({
+            where: { userId: dbUser.id },
+          });
         }
       }
 

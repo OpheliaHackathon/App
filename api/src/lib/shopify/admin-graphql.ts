@@ -132,20 +132,19 @@ export async function fetchAllShopifyProducts(
   let hasNext = true;
 
   while (hasNext) {
-    const data = await shopifyAdminGraphql<ProductsResponse>(cfg, PRODUCTS_QUERY, {
+    const data: ProductsResponse = await shopifyAdminGraphql(cfg, PRODUCTS_QUERY, {
       first: pageSize,
       after: cursor,
       query: options.searchQuery?.trim() || null,
     });
 
-    const conn = data.products;
-    for (const edge of conn.edges) {
+    for (const edge of data.products.edges) {
       out.push(edge.node);
     }
     options.onPage?.(out.length);
 
-    hasNext = conn.pageInfo.hasNextPage;
-    cursor = conn.pageInfo.endCursor;
+    hasNext = data.products.pageInfo.hasNextPage;
+    cursor = data.products.pageInfo.endCursor;
   }
 
   return out;
